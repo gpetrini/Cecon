@@ -1,0 +1,14 @@
+Package: Cecon
+Type: Package
+Title: Funções e rotinas para uso interno Cecon/Unicamp
+Version: 0.1.0
+Imports:
+    xts,
+    ggplot2
+Author: Cecon/Unicamp
+Maintainer: Gabriel Petrini da Silveira <gpetrinidasilveira@gmail.com>
+Description: Cria rotinas para atualizar e ajustar dados econômicos referentes a: (i) Crescimento, Emprego e renda; (ii) Política Fiscal; (iii) Política Monetária; (iv) Setor Externo; (v) Taxa de Câmbio; (vi) Estrutura Produtiva e  (vii) Conjuntura internacional.Contém funções para fazer operações sobre os dados assim como gerar gráficos padronizados para serem utilizados  nas notas de conjuntura.
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.1.0
