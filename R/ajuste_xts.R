@@ -2,6 +2,7 @@
 #' @description Transforma os dados em xts para utilizar nas demais séries do pacote
 #' @import xts
 #' @import purrr
+#' @import zoo
 #' @param dados Série a ser tratada
 #' @param col_data Coluna da série que possui as datas. Por padrão, usa-se a coluna 1
 #' @param col_dados Coluna(s) dos dados. Por padrão, seleciona-se a segunda coluna

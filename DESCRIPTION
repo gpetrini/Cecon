@@ -4,6 +4,7 @@ Title: Funções e rotinas para uso interno Cecon/Unicamp
 Version: 0.1.0
 Imports:
     xts,
+    \oo,
     ggplot2,
     purrr,
     plotly,

@@ -4,7 +4,6 @@
 #' @import xts
 #' @import purrr
 #' @import ggplot2
-#' @importMethodsFrom xts
 #' @param dado_xts Objeto em xts ou que possa ser convertido para xts pela funçao ajuste_xts()
 #' @param tipo_grafico Tipo de grafico a ser plotado. Por padrao, grafico de linha
 #' @param titulo Caractere que especifica qual o titulo do grafico
