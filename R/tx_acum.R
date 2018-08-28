@@ -1,4 +1,17 @@
-function (dados, digitos = 2, meses = 12, tabela = FALSE) 
+#' @title Taxa Acumulada
+#' @aliases tx_acum
+#' @author Arthur Welle
+#' @description Retorna taxa acumulada em m meses
+#' @return Um objeto xts
+#' @import xts
+#' @param dados Objeto conversivel em xts
+#' @param digitos Numero de casas decimais. Por padrao, 2
+#' @param meses Numero de meses para acumular a taxa de crescimento
+#' @param tabela Se TRUE, retorna a taxa acumulada junto com os dados originais
+#' @import xts
+#' @keywords Transformacoes
+
+tx_acum <- function (dados, digitos = 2, meses = 12, tabela = FALSE)
 {
     if ("ts" %in% class(dados)) {
         dados <- as.xts(dados)
