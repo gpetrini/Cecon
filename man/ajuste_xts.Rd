@@ -7,15 +7,18 @@
 ajuste_xts(dados, col_data = 1, col_dados = 2, remover_NA = FALSE)
 }
 \arguments{
-\item{dados}{Série a ser tratada}
+\item{dados}{Serie a ser tratada}
 
-\item{col_data}{Coluna da série que possui as datas. Por padrão, usa-se a coluna 1}
+\item{col_data}{Coluna da serie que possui as datas. Por padrao, usa-se a coluna 1}
 
-\item{col_dados}{Coluna(s) dos dados. Por padrão, seleciona-se a segunda coluna}
+\item{col_dados}{Coluna(s) dos dados. Por padrao, seleciona-se a segunda coluna}
 }
 \value{
-Série em xts
+Serie em xts
 }
 \description{
-Transforma os dados em xts para utilizar nas demais séries do pacote
+Transforma os dados em xts para utilizar nas demais series do pacote
+}
+\author{
+Gabriel Petrini
 }

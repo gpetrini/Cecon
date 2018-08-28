@@ -1,21 +1,23 @@
 #' @title ajuste_xts
-#' @description Transforma os dados em xts para utilizar nas demais séries do pacote
+#' @aliases ajuste_xts
+#' @author Gabriel Petrini
+#' @description Transforma os dados em xts para utilizar nas demais series do pacote
 #' @import xts
 #' @import purrr
 #' @import zoo
-#' @param dados Série a ser tratada
-#' @param col_data Coluna da série que possui as datas. Por padrão, usa-se a coluna 1
-#' @param col_dados Coluna(s) dos dados. Por padrão, seleciona-se a segunda coluna
-#' @remover_NA Se TRUE, remove os linhas que contém NAs. Por padrão, remover_NA = FALSE
-#' @return Série em xts
+#' @param dados Serie a ser tratada
+#' @param col_data Coluna da serie que possui as datas. Por padrao, usa-se a coluna 1
+#' @param col_dados Coluna(s) dos dados. Por padrao, seleciona-se a segunda coluna
+#' @remover_NA Se TRUE, remove os linhas que contem NAs. Por padrao, remover_NA = FALSE
+#' @return Serie em xts
 #' @export
 
 ajuste_xts <- function (dados, col_data = 1, col_dados = 2, remover_NA = FALSE)
 {
     if ("xts" %in% class(dados) | "zoo" %in% class(dados)) {
-        message("Série está em xts/zoo, função ajuste_xts não necessária")
+        message("Serie esta em xts/zoo, funcao ajuste_xts nao necessaria")
         if (sum(is.na(dados)) != 0 & remover_NA == FALSE) {
-            message("Séries contém NAs, use remover_NA = TRUE",
+            message("Series contem NAs, use remover_NA = TRUE",
                 call. = FALSE)
         }
         if (remover_NA == FALSE) {
@@ -31,7 +33,7 @@ ajuste_xts <- function (dados, col_data = 1, col_dados = 2, remover_NA = FALSE)
     }
     else {
         if (sum(is.na(dados)) != 0 & remover_NA == FALSE) {
-            message("Séries contém NAs, use remover_NA = TRUE",
+            message("Series contem NAs, use remover_NA = TRUE",
                 call. = FALSE)
         }
         if (remover_NA == TRUE) {

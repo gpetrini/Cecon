@@ -10,7 +10,7 @@ grafico_padrao(dado_xts, tipo_grafico = geom_line(size = 1),
   pontos = 0)
 }
 \arguments{
-\item{dado_xts}{Objeto em xts ou que possa ser convertido para xts pela funçao ajuste_xts()}
+\item{dado_xts}{Objeto em xts ou que possa ser convertido para xts pela funcao ajuste_xts()}
 
 \item{tipo_grafico}{Tipo de grafico a ser plotado. Por padrao, grafico de linha}
 
