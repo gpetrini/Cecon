@@ -2,7 +2,7 @@
 % Please edit documentation in R/grafico_padrao.R
 \name{grafico_padrao}
 \alias{grafico_padrao}
-\title{Gráfico Padrão}
+\title{Grafico Padrao}
 \usage{
 grafico_padrao(dado_xts, tipo_grafico = geom_line(size = 1),
   titulo = NULL, fonte = NULL, x_titulo = NULL, y_titulo = NULL,
@@ -10,31 +10,31 @@ grafico_padrao(dado_xts, tipo_grafico = geom_line(size = 1),
   pontos = 0)
 }
 \arguments{
-\item{dado_xts}{Objeto em xts ou que possa ser convertido para xts pela função ajuste_xts()}
+\item{dado_xts}{Objeto em xts ou que possa ser convertido para xts pela funçao ajuste_xts()}
 
-\item{tipo_grafico}{Tipo de gráfico a ser plotado. Por padrão, é plotado um gráfico de linha}
+\item{tipo_grafico}{Tipo de grafico a ser plotado. Por padrao, grafico de linha}
 
-\item{titulo}{Caractere que especifica qual o título do gráfico}
+\item{titulo}{Caractere que especifica qual o titulo do grafico}
 
-\item{fonte}{Caractere que espeficia a fonte. Não é necessário escrever "Fonte: "}
+\item{fonte}{Caractere que espeficia a fonte. Nao e necessario escrever "Fonte: "}
 
-\item{x_titulo}{Caractere com título do eixo x}
+\item{x_titulo}{Caractere com titulo do eixo x}
 
-\item{y_titulo}{Caractere com título do eixo y}
+\item{y_titulo}{Caractere com titulo do eixo y}
 
-\item{tema}{Tema do gráfico. Por padrão, utiliza-se theme_classic()}
+\item{tema}{Tema do grafico. Por padrao, utiliza-se theme_classic()}
 
-\item{quebra_data}{Período para seccionar o eixo x. Por padrão, é dividido por ano, isto é, "1 year"}
+\item{quebra_data}{Periodo para seccionar o eixo x. Por padrao, e dividido por ano, isto e, "1 year"}
 
-\item{label_data}{Formato em que é disponibilizada as datas do eixo x. Por padrão, é apresentada em anos, isto é, "%Y"}
+\item{label_data}{Formato em que e disponibilizada as datas do eixo x. Por padrao, e apresentada em anos, isto e, "%Y"}
 
-\item{pontos}{Argumento para especificar se devem conter pontos no gráfico. Por padrão, não apresenta pontos, isto é, pontos = 0}
+\item{pontos}{Argumento para especificar se devem conter pontos no grafico. Por padrao, nao apresenta pontos, isto e, pontos = 0}
 }
 \value{
-Retorna um gráfico ggplot
+Retorna um grafico ggplot
 }
 \description{
-Gera um gráfico com um template básico
+Gera um grafico com um template basico
 }
 \author{
 Gabriel Petrini
