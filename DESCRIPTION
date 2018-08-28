@@ -4,7 +4,18 @@ Title: Funções e rotinas para uso interno Cecon/Unicamp
 Version: 0.1.0
 Imports:
     xts,
-    ggplot2
+    ggplot2,
+    purrr,
+    plotly,
+    ggthemes,
+    lubridate,
+    readxl,
+    grid,
+    gridExtra,
+    BETS,
+    rbcb,
+    ecoseries,
+    ribge
 Author: Cecon/Unicamp
 Maintainer: Gabriel Petrini da Silveira <gpetrinidasilveira@gmail.com>
 Description: Cria rotinas para atualizar e ajustar dados econômicos referentes a: (i) Crescimento, Emprego e renda; (ii) Política Fiscal; (iii) Política Monetária; (iv) Setor Externo; (v) Taxa de Câmbio; (vi) Estrutura Produtiva e  (vii) Conjuntura internacional.Contém funções para fazer operações sobre os dados assim como gerar gráficos padronizados para serem utilizados  nas notas de conjuntura.

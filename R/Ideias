@@ -1,0 +1,9 @@
+Ideias:
+- Separar funções para cleaning, gráfico e texto
+- Aprimorar funções de clean_xts
+	- Cuidado NAs
+	- Deterlinar colunas e default
+	- Retirar Nas
+	- Implementar nas outras funções
+- Verificar como checar periodicidade de uma série
+

@@ -1,0 +1,1010 @@
+---
+title: "Documentação das Funções"
+author: "CECON"
+date: '2018'
+output:
+  html_document:
+    code_folding: show
+    highlight: textmate
+    theme: united
+    toc: yes
+    toc_float: yes
+  pdf_document:
+    toc: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Carregando pacotes
+
+```{r Pacotes,  message=FALSE, cache=FALSE, echo=TRUE, warning=FALSE, include=TRUE}
+##### Carregando pacotes -------
+library(ggplot2) # Gráficos
+library(ggthemes) # Temas ggplot
+library(plotly) # Plots dinâmicos
+library(astsa) # Arima; Série de desemprego (unemp)
+library(purrr)  # importa %>%
+library(xts) # Objeto zoo e xts
+library(lubridate) # Para eixos
+library(readxl) # Lida melhor com excel
+library(RColorBrewer) # Consultar
+library(lattice) # Plots
+library(grid) # Consultar
+library(gridExtra) # Consultar
+library(gtable) # Consultar
+library(magick) # Para ler imagem. ATENÇÂO INSTALAÇÂO
+library(rmarkdown) # Make cool dynamic documents [Necessário?]
+library(knitr) # Run R Code Chunks [Necessário?]
+library(DT) # Interactive HTML tables
+library(d3heatmap) # biblioteca para construir heatmaps
+library(colorRamps)# Ajuda com heatmaps e cores
+# Pacotes para dados brasileiros -----------------------
+library(BETS)
+library(rbcb) # Banco Central
+library(ecoseries) #BC ipeadata e SIDRA
+library(ribge) # IBGE
+# Pacotes para dados internacionais -----------------------
+library(imfr) #para pegar series do site do FMI 
+```
+
+
+# Séries
+
+## Tratamento
+
+### Correção de data
+
+- **Autor:** Gabriel Petrini
+- Função: ajuste_excel_data
+    + Transforma a série do excel em um objeto xts com a data ajustada para o R
+- Status: Em desenvolvimento
+
+```{r}
+ajuste_xts <- function(dados,
+                       col_data = 1,
+                       col_dados = 2,
+                       remover_NA = FALSE){
+    if ("xts" %in% class(dados) 
+        | "zoo" %in% class(dados)) {
+        message("Série está em xts/zoo, função ajuste_xts não necessária")
+    if (sum(is.na(dados)) != 0 & remover_NA == FALSE) {
+        message("Séries contém NAs, use remover_NA = TRUE", call. = FALSE)
+    }    
+    if (remover_NA == FALSE) {
+        xts(x = coredata(dados),
+        order.by = as.Date(index(dados)))
+    } else {
+        sem_NA <- !is.na(coredata(dados))
+        xts(x = coredata(dados[sem_NA]),
+        order.by = as.Date(index(dados[sem_NA])))
+    }
+    } else if ("ts" %in% class(dados)) {
+        dados <- as.xts(dados)
+    }
+        else {
+    if (sum(is.na(dados)) != 0 & remover_NA == FALSE) {
+        message("Séries contém NAs, use remover_NA = TRUE", call. = FALSE)
+    }
+    if (remover_NA == TRUE) {
+        teste_NA <- !(is.na(dados[, col_dados]))
+        dados_sNA <- dados[teste_NA,]
+        proxy <- as.data.frame(dados_sNA)
+        proxy_data <- as.Date(proxy[, col_data], origin = proxy[1, col_data])
+        xts(x = proxy[, col_dados],
+        order.by = proxy_data)
+    } else{
+     proxy <- as.data.frame(dados)
+     proxy_data <- as.Date(proxy[ , col_data], origin = proxy[1,col_data])
+     xts(x = proxy[, col_dados],
+        order.by = proxy_data)   
+    }
+        }
+}
+```
+
+Exemplo:
+
+```{r}
+dado_excel <- read_xlsx("../../Brutos/ativ_econ.xlsx", sheet = "IBCBr")
+dado_excel_ajustado <- ajuste_xts(dado_excel)
+head(dado_excel_ajustado, n = 13)
+dado_excel_sNA <- ajuste_xts(dado_excel, remover_NA = TRUE)
+head(dado_excel_sNA)
+class(dado_excel_sNA)
+head(ajuste_xts(dado_excel_sNA))
+```
+
+Atenção:
+
+
+
+### IPEADATA
+
+- **Autor:** Gabriel Petrini
+- Função: clean_ipeadata
+    + Uso: Separa os dados do IPEADATA em uma coluna com data (xts) e valores
+- Status: Aprimoramento
+
+```{r}
+clean_ipeadata <- function(dado_ipea) {
+  dado_desl <- unlist(dado_ipea)
+  valor <- dado_desl[((length(dado_desl)/2) + 1):length(dado_desl)]
+  data_ipea <- dado_desl[1:(length(dado_desl)/2)]
+  data_clean <- as.Date(data_ipea)
+  xts_name <- deparse((substitute(dado_ipea)))
+  xts(x = valor, order.by = data_clean)
+}
+```
+
+Exemplo:
+
+[EM ABERTO]
+
+Atenção:
+
+- Não testada para mais de uma série
+
+### Exportar dados
+
+- Autor: Gabriel Petrini
+- Status: Em desenvolvimento
+
+```{r}
+exportar_dados <- function(dados,
+                           pasta = "../Tratados", # Se não estiver na mesma pasta, "../Pasta"
+                           formato = ".RData") {
+    nome_dado <- deparse(substitute(dados)) 
+    nome_arquivo <- paste0(nome_dado,formato)
+    caminho <- file.path(pasta, nome_arquivo)
+     saveRDS(dados,
+             file = caminho)
+    }
+```
+
+Exemplo:
+
+```{r}
+exportar_dados(dado_excel_ajustado, 
+               pasta = "./Temp/")
+```
+
+
+
+## Operações
+
+### Média Móvel
+
+**OBS:** Para gráficos, usar ggplot
+
+- **Autor:** Arthur Welle
+- Função: MM2m (Média Móvel 12 meses)
+- Status: Aprimoramento
+
+```{r}
+MM12m <- function(x) {
+                y <- c(1:(length(x)))                        #cria variavel y to tamanho da serie inserida
+                      for(i in 1:(length(x)-11)) {         #para i vezes menos 12 
+                            y[i+11]<-mean(x[(i+0):(i+11)]) #faz média de 12 passos
+                      }
+                y[1:12]<-NA                                #coloca NA nas primeiras 12 entradas
+                return(y)                                  #dá como retorno a série media movel 12 meses
+}
+```
+
+Exemplo:
+
+```{r}
+unemp_MM12m <- MM12m(unemp)
+plot.ts(unemp_MM12m)
+```
+
+
+Sugestões de mudanças:
+
+- Detectar a ordem da média móvel
+    + Tornar 12 meses como default
+- Renomear argumentos
+- **Atenção:** Retorna como valor númerico
+    + Alterar para ts/xts
+    
+### Média Móvel Geral
+
+**OBS:** Para gráficos, usar ggplot
+
+- **Autor:** Gabriel Petrini (Baseada na função MM12m)
+
+```{r}
+media_movel <- function(dados,
+                        digitos = 2, 
+                        meses = 12,
+                        tabela = FALSE) {
+    if ("ts" %in% class(dados)) { # Inicia checagem
+            dados <- as.xts(dados)
+    }
+    else if ("tbl_df" %in% class(dados) |
+            "tbl" %in% class(dados)) {
+        stop("Usar ajuste_xts", call. = FALSE)
+            }
+    else if ("xts" %in% class(dados) |
+            "zoo" %in% class(dados)) {
+        dados <- dados
+    }
+    else  {
+        stop("Usar ajuste_xts", call. = FALSE)
+    } # Inicia operacao
+    y <- c(1:(length(dados)))  #cria variavel y to tamanho da serie inserida
+    for (i in 1:(length(dados) - (meses - 1))) { #para i vezes menos meses 
+        y[i + (meses - 1)] <- mean(dados[(i + 0):(i + (meses - 1))]) #faz média de meses passos
+        }
+    y[1:meses] <- NA   #coloca NA nas primeiras 12 entradas
+    if (tabela == FALSE) {
+        mm_xts <-  xts(x = y,
+                    order.by = as.Date(index(dados)))
+        return(mm_xts)
+    } else {
+        mm_xts <-  xts(x = y,
+                    order.by = as.Date(index(dados)))
+        Tabela_mm <- merge.xts(x = dados,
+                           y = mm_xts)
+        # serie <- deparse(substitute(dados)) # TODO
+        # colnames(Tabela_mm) <- c(as.character(serie), "Media_Movel")
+    return(Tabela_mm)
+    }
+}
+unemp_media12 <- media_movel(unemp)
+head(unemp_media12)
+unemp_media12T <- media_movel(unemp, tabela = TRUE)
+head(unemp_media12T, n = 13)
+unemp_media4 <- media_movel(unemp, meses = 4)
+head(unemp_media4)
+```
+
+Atenção:
+
+- Erro com dados tbl e tbl_df
+
+### Taxa acumulada
+
+- **Autor:** Gabriel Petrini (Baseada em FazTexto.TxAccum)
+- Status: Quebrada
+
+```{r}
+# tx_acum <- function(dados,
+#                         digitos = 2, 
+#                         meses = 12,
+#                         tabela = FALSE) {
+#     if ("ts" %in% class(dados)) { # Inicio checagem
+#             dados <- as.xts(dados)
+#     }
+#     else if ("tbl_df" %in% class(dados) |
+#             "tbl" %in% class(dados)) {
+#         stop("Usar ajuste_xts", call. = FALSE)
+#             }
+#     else if ("xts" %in% class(dados) |
+#             "zoo" %in% class(dados)) {
+#         dados <- dados
+#     }
+#     else  {
+#         stop("Usar ajuste_xts", call. = FALSE)
+#     } # Inicio Operacao
+#     m <- c(1:(length(dados)))    #cria variavel m to tamanho da serie inserida
+#     for (i in 1:(length(dados) - (meses - 1))) {#para o total tamanho de x vezes, menos 12
+#         k <- 1  #cria a var K iterada para chegar na serie m
+#             for (j in 0:(meses - 1)) { #meses vezes para se taxa anualizada 
+#                 k <- k * (1 + dados[i - j + (meses - 1)]/100) #faz multiplica??o de 12 passos para cada posi??o i
+#                 }
+#             k <- (k - 1)*100#retira 1 finalmente para ficar em valor porcentual
+#     }
+#     m[i + (meses - 1)] <- k
+#     m[1:(meses - 1)] <- NA           #coloca NA nas primeiras 12 entradas
+#     return(m)       
+#         if (tabela == FALSE) { # Inicio tabela
+#         acum_xts <-  xts(x = k,
+#                     order.by = as.Date(index(dados)))
+#         return(acum_xts)
+#     } else {
+#     acum_xts <-  xts(x = k,
+#                     order.by = as.Date(index(dados)))
+#     Tabela_accum <- merge.xts(x = dados,
+#                               y = acum_xts)
+#     return(Tabela_accum)
+#     }
+# }
+# teste_acum <- tx_acum(UnempRate) # TODO
+```
+
+
+
+
+# Gráficos
+
+## Plotar gráficos
+
+### Template simples
+
+- Função: grafico_padrão
+- **Autor:** Gabriel Petrini
+- Status: Aprimoramento
+
+```{r}
+grafico_padrao <- function(dado_xts, 
+                           tipo_grafico = geom_line(size = 1), 
+                           titulo = NULL,
+                           fonte = NULL,
+                           x_titulo = NULL, 
+                           y_titulo = NULL,
+                           tema = theme_classic(), 
+                           quebra_data = "1 year",
+                           label_data = "%Y",
+                           pontos = 0){
+  dado_xts <- as.xts(dado_xts)
+  ggplot(data = dado_xts,
+         aes(
+           x = as.Date(index(dado_xts)),
+           y = coredata(dado_xts))) +
+    tipo_grafico + 
+    labs(x = x_titulo,
+         y = y_titulo,
+         title = titulo,
+         caption = paste0("Fonte: ", fonte)) + 
+    tema + 
+    theme(panel.border = element_blank(), 
+          axis.line = element_line(colour = "black", 
+                                   size = 0.7), 
+          axis.text.x = element_text(angle = 90, 
+                                     hjust = 0, 
+                                     vjust = 0.5, 
+                                     size = 14),
+          axis.text.y = element_text(angle = 0, 
+                                     hjust = 0, 
+                                     vjust = 0.5, 
+                                     size = 14),
+          text = element_text(size = 10,
+                            family = "TT Times New Roman")) +
+    scale_x_date(date_breaks = quebra_data, date_labels = label_data) +
+    geom_point(size = pontos)
+}
+```
+
+Exemplo:
+
+```{r}
+Plot_Simples <- grafico_padrao(unemp)
+Plot_Simples
+Plot_Formatado <- grafico_padrao(dado_xts = unemp, 
+                                 titulo = "Desemprego nos EUA (1947-1980)", 
+                                 x_titulo = "Ano", 
+                                 y_titulo = "Desempregados (mil)", 
+                                 quebra_data = "5 years", 
+                                 label_data = "%Y", 
+                                 tema = theme_economist_white(), 
+                                 fonte = "Pacote astsa")
+Plot_Formatado
+```
+
+Sugestões de mudança:
+
+- Usar como base para função de gráficos do cecon
+    + Incluir logo cecon
+    + Verificar estilo cecon
+    + Determinar número de linhas
+
+### Logo
+
+O logo do cecon será salvo em um objeto para agilizar a compilação:
+
+```{r}
+#logo_cecon <- image_read("http://i.imgur.com/2e3FQaz.png")
+#logo_cecon
+```
+
+
+```{r}
+add_logo <- function(grafico = last_plot()){
+    grafico  %>% 
+        ggplotly() %>%  
+        layout(images = list(list(source = "http://i.imgur.com/2e3FQaz.png", 
+                                  xref = "paper", 
+                                  yref = "paper", 
+                                  x= 0.02, 
+                                  y= 1, 
+                                  sizex = 0.25, 
+                                  sizey = 0.25, 
+                                  opacity = 0.5))) %>%
+    config(displayModeBar = TRUE)
+}
+```
+
+Exemplo:
+
+```{r}
+teste <- grafico_padrao(unemp)
+teste_logo <- add_logo(teste)
+teste_logo
+
+```
+
+Atenção:
+
+- Como salvar?
+- Editar temas
+- Editar labels flutuantes
+
+### Gráfico CECON
+
+- Autor: Gabriel Petrini
+- Status: Em construção
+
+```{r}
+grafico_cecon <- function(dado_xts, 
+                          logo = TRUE,
+                          FUN = grafico_padrao){
+    grafico <- dado_xts %>% FUN()
+    if (logo == TRUE) {
+        grafico_logo <- grafico %>%  add_logo()
+        return(grafico_logo)
+        
+        # if (is.null(transform) == FALSE ) {
+        #     grafico_logo %>% add_fun(transform)
+        # }
+        # 
+        # else {
+        #     return(grafico_logo)
+        # }
+        
+    } else {
+        return(grafico)
+    }
+}
+```
+
+Exemplo:
+
+```{r}
+grafico_cecon(unemp)
+```
+
+
+
+Sugestões de mudanças:
+
+- Adicionar fonte
+- Adicionar operação
+
+### Gráfico rápido
+
+Ideia é gerar um gráfico pronto para uso a partir de dados brutos e em poucas linhas de código. A implementação é pensada nas rotinas não focadas na geração de gráficos. No momento, só é possível plotar uma série por vez.
+
+- Autor: Gabriel Petrini
+- Status: Em desenvolvimento
+
+```{r}
+grafico_rapido <- function(dado,
+                           remover_NA = FALSE){
+    grafico <- dado %>% 
+        ajuste_xts(remover_NA = remover_NA) %>% 
+        grafico_padrao %>% 
+        add_logo
+    return(grafico)           }
+```
+
+Exemplo:
+
+```{r}
+grafico_rapido(dado_excel, remover_NA = TRUE)
+#grafico_rapido(unemp_media12T) # Adicionar para mais de uma série
+```
+
+
+## Exportar gráficos
+
+### Salvar gráfico
+
+
+- **Autor:** Gabriel Petrini
+- Função: salvar_grafico
+    + Uso: Salva gráfico no formato .png na pasta especificada. Nome do arquivo final é iniciado com YYYY-MM-DD
+- Status: Aprimoramento
+
+```{r}
+salvar_grafico <- function(grafico, 
+                           pasta = "./Graficos", 
+                           formato = ".png"){
+  nome_grafico <- deparse(substitute(grafico))
+  salvar_nome <- paste0(Sys.Date(),"_",nome_grafico,formato)
+  ggsave(file.path(pasta, salvar_nome))
+}
+```
+
+Exemplo:
+
+Consultar pasta Temp
+
+```{r}
+salvar_grafico(grafico = Plot_Formatado, 
+               pasta = 'Temp')
+```
+
+
+Sugestão de modificações:
+
+- Adicionar default pasta = 'Grafico'
+
+
+# Análises (Gerar textos)
+
+## Positivo/Negativo
+
+Cria uma função que retorna texto "positivo" "negativo" dependendo se acima ou abaixo de z
+
+- Autor: Arthur Welle
+- Status: Aprimoramento
+
+```{r}
+FazTexto.Cortes1 <- function(x, # Série a ser analisada
+                             z, # fronteira
+                             y){ # Se feminino, y=1. Se masculino, y=2.
+  if (x >= z & y == 1) {k <- "positiva"}
+  if (x >= z & y == 2) {k <- "positivo"}
+  if (x < z & y == 1) {k <- "negativa"}
+  if (x < z & y == 2) {k <- "negativo"}
+  return(k)
+}
+```
+
+Exemplo:
+
+[EM ABERTO]
+
+Sugestões de mudança:
+
+- Tornar masc/fem um boolean
+
+## Níveis bom/ruim
+
+Cria uma função que retorna texto "muito ruim", "ruim", "bom", "muito bom".
+
+- Autor: Arthur Welle
+- Status: Aprimoramento
+
+```{r}
+FazTexto.Cortes3 <- function(x, # Séria a ser analisada
+                             y, # Corte 1
+                             z, # Corte 2
+                             w # Corte 3
+                             ){
+  k <- "muito ruim"
+  if (x > y) {k <- "ruim"}
+  if (x > z) {k <- "bom"}
+  if (x > w) {k <- "muito bom"}
+  return(k)
+}
+```
+
+Exemplo:
+
+[EM ABERTO]
+
+Sugestões de mudanças:
+
+Dúvidas:
+
+- Que tipo de série deve ser incluída?
+- Onde estão definidos y, z, w?
+
+
+## Último Valor
+
+Cria uma função que retorna o ultimo valor de uma série x.
+
+- Autor: Arthur Welle
+- Status: Aprimoramento
+
+```{r}
+FazTexto.UltimoValor <- function(x, # Série a ser analisada
+                                 digitos = 2){
+  
+    k <- format(round(x[length(x)], 
+                      digits = digitos), 
+                big.mark = ".", 
+                decimal.mark = ",") 
+  return(k)
+}
+```
+
+Exemplo:
+
+- Último valor da série unemp é `r FazTexto.UltimoValor(unemp)`
+
+Sugestões de mudanças:
+
+- Adicionar unidade de medida
+
+Mudanças:
+
+- Tornou dígitos 2 por default
+
+## 12 meses anteriores
+
+Cria uma função que retorna o valor 12 meses anteriores de uma série mensal x:
+
+- Autor: Arthur Welle
+- Status: Aprimoramento
+
+```{r}
+FazTexto.Valor12mAntes <- function(x, # Série a ser analisada
+                                   digitos = 2){
+  k <- format(round(x[length(x) - 11],
+                    digits = digitos), 
+              big.mark = ".", 
+              decimal.mark = ",") 
+  return(k)
+}
+```
+
+Exemplo:
+
+- O valor de 12 meses anteriores da série unemp é `r FazTexto.Valor12mAntes(unemp)`
+
+Mudanças:
+
+- Dígitos = 2 por padrão
+
+Sugestões:
+
+- Generalizar (abaixo)
+
+
+### m meses anteriores
+
+Expande função 12 meses anteriores para qualquer número (12 padrão):
+
+- Autor: Gabriel Petrini (Baseada em FazTexto.Valor12mAntes)
+- Status: Desenvolvimento
+
+```{r}
+FazTexto.ValorMesAntes <- function(x, # Série a ser analisada
+                                   digitos = 2,
+                                   meses = 12){
+  k <- format(round(x[length(x) -  (meses - 1)],
+                    digits = digitos), 
+              big.mark = ".", 
+              decimal.mark = ",") 
+  return(k)
+}
+```
+
+Exemplo:
+
+- O valor de 4 meses anteriores da série unemp é `r FazTexto.ValorMesAntes(unemp, meses = 4)`
+
+## Variação absoluta (p.p.) 12 meses
+
+Cria uma função que retorna a variação absoluta (em pontos percentuais se ja for uma série percental) de uma série no ultimo ano:
+
+- Autor: Arthur Welle
+- Status: Aprimoramento
+
+```{r}
+FazTexto.Var12m.Abs <- function(x, # Série a ser analisada
+                                digitos = 2){
+  k <- format(round(x[length(x)] - x[length(x) - 11], #subtrai o ultimo valor da série x de 12 meses anteriores
+              digits = digitos), 
+              big.mark = ".", 
+              decimal.mark = ",") 
+  return(k)
+}
+```
+
+
+Exemplo:
+
+- Variação absoluta (%) em 12 meses de unemp é `r FazTexto.Var12m.Abs(unemp)`
+
+
+Mudanças:
+
+- Dígitos = 2 por default
+
+Sugestões de mudanças:
+
+- Verificar/Forçar série em percentual
+- Generalização (abaixo)
+
+### Variação absoluta (p.p.) 24 meses
+
+Cria uma função que retorna a variação em pontos percentuais de uma série no ultimos dois anos:
+
+- Autor: Arthur Welle
+- Status: Substituída (abaixo)
+
+```{r}
+FazTexto.Var24m.Abs <- function(x,y){#x é a séria a ser análisada, y o número de digitos da saida
+  k=format(round(x[length(x)]-x[length(x)-23],digits = y), big.mark=".", decimal.mark=",") #subtrai o ultimo valor da série x de 24 meses anteriores
+  return(k)
+}
+```
+
+
+### Variação absoluta (p.p.) n meses
+
+- Autor: Gabriel Petrini (baseada em FazTexto.Var12m.Abs)
+
+```{r}
+FazTexto.VarMes.Abs <- function(x, # Série a ser analisada
+                                digitos = 2, 
+                                meses = 12){
+  k <- format(round(x[length(x)] - x[length(x) - (meses - 1)], #subtrai o ultimo valor da série x de meses meses anteriores
+              digits = digitos), 
+              big.mark = ".", 
+              decimal.mark = ",") 
+  return(k)
+}
+```
+
+Exemplo:
+
+- Variação absoluta em 24 meses de unemp é `r FazTexto.VarMes.Abs(unemp, meses = 24)`
+
+## Variação percentual 12 meses
+
+Cria uma função que retorna a variação percentuais de uma série no ultimo ano
+
+- Autor: Arthur Welle
+- Status: Aprimoramento
+
+```{r}
+FazTexto.Var12m.porc <- function(x, # Série a ser analisada
+                                 digitos = 2){
+  k <- format(round((((x[length(x)]/x[length(x) - 11]) - 1)*100), #divide o ultimo valor da série x de 12 meses anteriores
+                    digits = digitos), 
+              big.mark = ".", 
+              decimal.mark = ",") 
+  return(k)
+}
+```
+
+Exemplo:
+
+- Variação percentual da série unemp no último ano foi de `r FazTexto.Var12m.porc(unemp)`%
+
+Mudanças:
+
+- Dígitos = 2 por default
+
+Sugestões de mudanças:
+
+- Verificar/Forçar série em percentual
+- Generalização (abaixo)
+- Incluir %
+
+
+### Variação percentual 24 meses
+
+Cria uma função que retorna a variação percentuais de uma série nos ultimos 2 anoa
+
+- Autor: Arthur Welle
+- Status: Substituída (abaixo)
+
+```{r}
+FazTexto.Var24m.porc <- function(x,y){#x é a séria a ser análisada, y o número de digitos da saida
+  k=format(round((((x[length(x)]/x[length(x)-23])-1)*100),digits = y), big.mark=".", decimal.mark=",") #divide o ultimo valor da série x de 24 meses anteriores
+  return(k)
+}
+```
+
+
+### Variação percentual n meses
+
+Cria uma função que retorna a variação percentuais de uma série nos último n meses
+
+- Autor: Gabriel Petrini
+- Status: Desenvolvimento
+
+```{r}
+FazTexto.VarMes.porc <- function(x, # Série a ser analisada
+                                 digitos = 2,
+                                 meses = 12){
+  k <- format(round((((x[length(x)]/x[length(x) - (meses - 1)]) - 1)*100), #divide o ultimo valor da série x de meses meses anteriores
+                    digits = digitos), 
+              big.mark = ".", 
+              decimal.mark = ",") 
+  return(k)
+}
+```
+
+Exemplo:
+
+- Variação percentual da série unemp nos últimos 2 anos foi de `r FazTexto.VarMes.porc(unemp, meses = 24)`%
+
+
+
+## Taxa anualizada
+
+Cria função para taxa anualizado (eleva a 12 potência)(ex. IPCA=2,33)
+
+- Autor: Arthur Welle
+- Status: Aprimoramento
+
+```{r}
+FazTexto.TaxaAnualizada <- function(x){#x é a séria a ser análisada
+  k <- c(1:length(x)) 
+     for (i in 0:length(x)) {         
+        k[i] <- (1 + x[i]/100)^12
+     }
+  k <- (k - 1)*100
+  return(k)
+}
+```
+
+Exemplo:
+
+[EM ABERTO]
+
+Sugestões de mudança:
+
+- Verificar se está em taxa
+
+Dúvidas:
+
+- Retorna texto?
+
+## Acumulado 12 meses
+
+Cria função para acumulado em 12 meses
+
+- Autor: Arthur Welle
+- Status: Aprimoramento
+
+
+```{r}
+FazTexto.Acc12m <- function(x,
+                            digitos = 2){
+  k <- 0
+     for (i in 0:11) {         #para i vezes menos 12 
+        k <- k + x[length(x) - i] #faz soma de 12 passos
+     }
+     k <- format(round(k, digits = digitos), 
+                 big.mark = ".", 
+                 decimal.mark = ",") #arredonda para y digitos
+  return(k)
+}
+```
+
+Exemplo:
+
+- A taxa acumulada em 12 meses para unemp é `r FazTexto.Acc12m(unemp)`
+
+Mudanças:
+
+- Dígitos = 2 por default
+
+Sugestões de mudanças:
+
+- Generalização (abaixo)
+- Incluir %
+
+### Acumulado m meses
+
+Cria função para acumulado em m meses
+
+- Autor: Gabriel Petrini
+- Status: Aprimoramento
+
+
+```{r}
+FazTexto.AccMes <- function(x,
+                            digitos = 2,
+                            meses = 12){
+  k <- 0
+     for (i in 0:(meses - 1)) {         #para i vezes menos meses
+        k <- k + x[length(x) - i] #faz soma de 12 passos
+     }
+     k <- format(round(k, digits = digitos), 
+                 big.mark = ".", 
+                 decimal.mark = ",") 
+  return(k)
+}
+```
+
+Exemplo:
+
+- A acumulado em 4 meses para unemp é `r FazTexto.AccMes(unemp, meses = 4)`
+
+## Taxa acumulada 12 meses
+
+- Autor: Arthur Welle
+- Status: Corrigir
+
+```{r}
+FazTexto.TaxaAcc12m <- function(x){#x ? a s?ria a ser an?lisada
+                m <- c(1:(length(x))) #cria variavel m to tamanho da serie inserida
+                for (i in 1:(length(x) - 11)) { #para o total tamanho de x vezes, menos 12
+                    k <- 1  #cria a var K iterada para chegar na seria m
+                    for (j in 0:11) {#12 vezes para se taxa anualizada 
+                        k <- k * (1 + x[(i - j) + 11]/100) #faz multiplica??o de 12 passos para cada posi??o i
+                            }
+                     k <- (k - 1)*100 #retira 1 finalmente para ficar em valor porcentual
+                     m[i + 11] <- k
+                      }
+                m[1:11] <- NA   #coloca NA nas primeiras 12 entradas
+                return(m)  #d? como retorno a s?rie taxa anualizada
+}
+```
+
+Exemplo:
+
+- Taxa acumulada em 12 meses de UnempRate é `r FazTexto.TaxaAcc12m(UnempRate)`
+
+
+### Taxa acumulada m meses
+
+- Autor: Gabriel Petrini
+- Status: Quebrada
+
+```{r}
+FazTexto.TaxaAccMeses <- function(x,
+                                  meses = 12){#x ? a s?ria a ser an?lisada
+                m <- c(1:(length(x))) #cria variavel m to tamanho da serie inserida
+                for (i in 1:(length(x) (meses - 1))) { #para o total tamanho de x vezes, menos 12
+                    k <- 1  #cria a var K iterada para chegar na seria m
+                    for (j in 0:(meses - 1)) {#12 vezes para se taxa anualizada 
+                        k <- k * (1 + x[(i - j) + (meses - 1)]/100) #faz multiplica??o de 12 passos para cada posi??o i
+                            }
+                     k <- (k - 1)*100 #retira 1 finalmente para ficar em valor porcentual
+                     m[i + (meses - 1)] <- k
+                      }
+                m[1:(meses - 1)] <- NA   #coloca NA nas primeiras 12 entradas
+                return(m)  #d? como retorno a s?rie taxa anualizada
+}
+```
+
+- Taxa acumulada em 4 meses de UnempRate é 
+
+
+## Número índice
+
+Cria função para criar número indice de uma série mensal de inflação (para usar em deflacionamentos até para a ultima data)
+
+- Autor: Arthur Welle
+- Status: Aprimoramento
+
+```{r}
+FazTexto.N_Indice <- function(x){#x é a séria a ser análisada
+  k <- c(1:length(x)) #retorna o numero indice para deflacionar para o ultimo valor do ipca
+     k[1] <- (1 + x[1]/100)
+     for (i in 2:length(x)) {         
+        k[i] <- (1 + x[i]/100)*k[i - 1]
+     }
+  k <- k[length(k)/k]
+  return(k)
+}
+```
+
+Exemplo:
+
+[EM ABERTO]
+
+Dúvidas:
+
+- Retorna Texto?
+
+# Exportando funções
+
+```{r}
+# save(object = add_logo,
+#         file = "Funcoes.R")
+```
+
+
+# Pendências
+
+- Reduzir dependências de pacotes
+- Amplicar ajuste_xts para mais de uma série
+- Corrigir função de taxa acumulada
+- Incluir logo cecon sem ggplotly
+- Exportar gráfico cecon ggplotly
+- Adicionar funções no ggplotly
+- Exportar funções
