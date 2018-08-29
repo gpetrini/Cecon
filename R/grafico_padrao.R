@@ -2,7 +2,7 @@
 #' @author Gabriel Petrini
 #' @description Gera um grafico com um template basico
 #' @import xts
-#' @import purrr
+#' @import dplyr
 #' @import ggplot2
 #' @param dado_xts Objeto em xts ou que possa ser convertido para xts pela funcao ajuste_xts()
 #' @param tipo_grafico Tipo de grafico a ser plotado. Por padrao, grafico de linha

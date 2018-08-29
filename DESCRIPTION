@@ -6,7 +6,7 @@ Imports:
     xts,
     zoo,
     ggplot2,
-    purrr,
+    dplyr,
     plotly,
     ggthemes,
     lubridate,
