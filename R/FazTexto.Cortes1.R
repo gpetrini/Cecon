@@ -1,7 +1,8 @@
 #' @title Faz Texto Cortes 1
 #' @author Arthur Welle
+#' @aliases FazTexto.Cortes1
 #' @export
-#' @description Cria uma função que retorna texto “positivo” “negativo” dependendo se acima ou abaixo de z
+#' @description Cria uma funcao que retorna texto “positivo” “negativo” dependendo se acima ou abaixo de z
 #' @param x Serie a ser analisada
 #' @param z Parâmetro a ser comparado
 #' @param y Se 1, retorna uma palavra feminina. Se 2, retorna masculino
