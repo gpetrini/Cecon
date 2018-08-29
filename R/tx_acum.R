@@ -8,7 +8,7 @@
 #' @param digitos Numero de casas decimais. Por padrao, 2
 #' @param meses Numero de meses para acumular a taxa de crescimento
 #' @param tabela Se TRUE, retorna a taxa acumulada junto com os dados originais
-#' @import xts
+#' @export
 #' @keywords Transformacoes
 
 tx_acum <- function (dados, digitos = 2, meses = 12, tabela = FALSE)

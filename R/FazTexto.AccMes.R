@@ -1,4 +1,6 @@
-function (x, digitos = 2, meses = 12) 
+#'
+
+FazTexto.AccMes <- function (x, digitos = 2, meses = 12)
 {
     k <- 0
     for (i in 0:(meses - 1)) {
