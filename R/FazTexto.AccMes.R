@@ -1,7 +1,7 @@
 #' @title Faz Texto Acumulado Mes
 #' @aliases FazTexto.AccMes
 #' @author Arthur Welle
-#' @import
+#' @export
 #' @description Gera texto com taxa acumulada em m meses
 #' @return Texto
 #' @param x Serie a ser calculada a taxa
