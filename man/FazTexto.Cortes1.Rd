@@ -14,7 +14,7 @@ FazTexto.Cortes1(x, z, y)
 \item{y}{Se 1, retorna uma palavra feminina. Se 2, retorna masculino}
 }
 \description{
-Cria uma função que retorna texto “positivo” “negativo” dependendo se acima ou abaixo de z
+Cria uma funcao que retorna texto “positivo” “negativo” dependendo se acima ou abaixo de z
 }
 \author{
 Arthur Welle
