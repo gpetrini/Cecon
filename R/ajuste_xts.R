@@ -3,7 +3,7 @@
 #' @author Gabriel Petrini
 #' @description Transforma os dados em xts para utilizar nas demais series do pacote
 #' @import xts
-#' @import purrr
+#' @import dplyr
 #' @import zoo
 #' @param dados Serie a ser tratada
 #' @param col_data Coluna da serie que possui as datas. Por padrao, usa-se a coluna 1

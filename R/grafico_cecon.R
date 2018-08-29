@@ -5,7 +5,7 @@
 #' @import ggplot2
 #' @import xts
 #' @import plotly
-#' @import purrr
+#' @import dplyr
 #' @param dado_xts Dado em xts
 #' @param logo Se TRUE, inclui logo do CECON
 #' @param FUN Tipo de função que gera gráfico. Padrao grafico_padrao

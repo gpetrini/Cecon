@@ -4,7 +4,7 @@
 #' @description Gera um grafico interativo com logo do CECON a partir de uma serie conversivel em xts
 #' @import ggplot2
 #' @import xts
-#' @import purrr
+#' @import dplyr
 #' @export
 #' @param dado Serie conversivel em xts
 #' @param remover_NA Se TRUE, remove NAs

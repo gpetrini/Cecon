@@ -4,7 +4,7 @@
 #' @description Adiciona logo do cecon aos graficos
 #' @import ggplot2
 #' @import plotly
-#' @import purrr
+#' @import dplyr
 #' @param grafico Grafico gerado pelo ggplot. Por padrao, usa o ultimo grafico gerado
 #' @return Um grafico interativo em html (plotly)
 
