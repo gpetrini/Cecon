@@ -8,7 +8,7 @@
 #' @param dados Serie a ser tratada
 #' @param col_data Coluna da serie que possui as datas. Por padrao, usa-se a coluna 1
 #' @param col_dados Coluna(s) dos dados. Por padrao, seleciona-se a segunda coluna
-#' @remover_NA Se TRUE, remove os linhas que contem NAs. Por padrao, remover_NA = FALSE
+#' @param remover_NA Se TRUE, remove os linhas que contem NAs. Por padrao, remover_NA = FALSE
 #' @return Serie em xts
 #' @export
 

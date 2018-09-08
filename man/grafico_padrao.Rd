@@ -7,7 +7,7 @@
 grafico_padrao(dado_xts, tipo_grafico = geom_line(size = 1),
   titulo = NULL, fonte = NULL, x_titulo = NULL, y_titulo = NULL,
   tema = theme_classic(), quebra_data = "1 year", label_data = "\%Y",
-  pontos = 0, ...)
+  pontos = 0)
 }
 \arguments{
 \item{dado_xts}{Objeto em xts ou que possa ser convertido para xts pela funcao ajuste_xts()}
@@ -29,8 +29,6 @@ grafico_padrao(dado_xts, tipo_grafico = geom_line(size = 1),
 \item{label_data}{Formato em que e disponibilizada as datas do eixo x. Por padrao, e apresentada em anos, isto e, "%Y"}
 
 \item{pontos}{Argumento para especificar se devem conter pontos no grafico. Por padrao, nao apresenta pontos, isto e, pontos = 0}
-
-\item{...}{Argumentos adicionais para o gráfico}
 }
 \value{
 Retorna um grafico ggplot

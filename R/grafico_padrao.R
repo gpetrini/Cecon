@@ -14,7 +14,6 @@
 #' @param quebra_data Periodo para seccionar o eixo x. Por padrao, e dividido por ano, isto e, "1 year"
 #' @param label_data Formato em que e disponibilizada as datas do eixo x. Por padrao, e apresentada em anos, isto e, "%Y"
 #' @param pontos Argumento para especificar se devem conter pontos no grafico. Por padrao, nao apresenta pontos, isto e, pontos = 0
-#' @param ... Argumentos adicionais para o gráfico
 #' @example
 #' library(astsa)
 #' grafico_padrao(unemp)

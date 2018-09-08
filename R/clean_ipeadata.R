@@ -2,7 +2,6 @@
 #' @aliases clean_ipea
 #' @author Gabriel Petrini
 #' @description Trata os dados baixados do IPEADATA para serem utilizados com os outros pacotes da serie
-#' @import ecoseries
 #' @import xts
 #' @param dado_ipea Dados baixados do IPEADATA
 #' @return Um objeto xts

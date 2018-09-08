@@ -12,6 +12,8 @@ ajuste_xts(dados, col_data = 1, col_dados = 2, remover_NA = FALSE)
 \item{col_data}{Coluna da serie que possui as datas. Por padrao, usa-se a coluna 1}
 
 \item{col_dados}{Coluna(s) dos dados. Por padrao, seleciona-se a segunda coluna}
+
+\item{remover_NA}{Se TRUE, remove os linhas que contem NAs. Por padrao, remover_NA = FALSE}
 }
 \value{
 Serie em xts
