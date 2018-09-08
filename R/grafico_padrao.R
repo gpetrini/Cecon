@@ -14,7 +14,7 @@
 #' @param quebra_data Periodo para seccionar o eixo x. Por padrao, e dividido por ano, isto e, "1 year"
 #' @param label_data Formato em que e disponibilizada as datas do eixo x. Por padrao, e apresentada em anos, isto e, "%Y"
 #' @param pontos Argumento para especificar se devem conter pontos no grafico. Por padrao, nao apresenta pontos, isto e, pontos = 0
-#' @param cor_grafico Cor a ser utilizada
+#' @param ... Argumentos adicionais para o gráfico
 #' @example
 #' library(astsa)
 #' grafico_padrao(unemp)
@@ -23,12 +23,11 @@
 
 grafico_padrao <- function (dado_xts, tipo_grafico = geom_line(size = 1), titulo = NULL,
           fonte = NULL, x_titulo = NULL, y_titulo = NULL, tema = theme_classic(),
-          quebra_data = "1 year", label_data = "%Y", pontos = 0, cor_grafico = "blue2"){
+          quebra_data = "1 year", label_data = "%Y", pontos = 0, ...){
     dado_xts <- as.xts(dado_xts)
     ggplot(data = dado_xts,
            aes(x = as.Date(index(dado_xts)),
-               y = coredata(dado_xts),
-               fill = cor_grafico)) +
+               y = coredata(dado_xts))) +
         tipo_grafico + labs(x = x_titulo,
                             y = y_titulo,
                             title = titulo,
@@ -40,5 +39,5 @@ grafico_padrao <- function (dado_xts, tipo_grafico = geom_line(size = 1), titulo
                      text = element_text(size = 10, family = "TT Times New Roman")) +
         scale_x_date(date_breaks = quebra_data,
                      date_labels = label_data) +
-        geom_point(size = pontos)
+        geom_point(size = pontos) + legenda + ...
 }

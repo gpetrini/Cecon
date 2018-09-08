@@ -7,6 +7,7 @@
 #' @import dplyr
 #' @param grafico Grafico gerado pelo ggplot. Por padrao, usa o ultimo grafico gerado
 #' @return Um grafico interativo em html (plotly)
+#' @export
 
 add_logo <- function (grafico = last_plot())
 {
