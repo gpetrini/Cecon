@@ -22,11 +22,12 @@
 
 grafico_padrao <- function (dado_xts, tipo_grafico = geom_line(size = 1), titulo = NULL,
           fonte = NULL, x_titulo = NULL, y_titulo = NULL, tema = theme_classic(),
-          quebra_data = "1 year", label_data = "%Y", pontos = 0){
+          quebra_data = "1 year", label_data = "%Y", pontos = 0, cor_grafico = NULL){
     dado_xts <- as.xts(dado_xts)
     ggplot(data = dado_xts,
            aes(x = as.Date(index(dado_xts)),
-               y = coredata(dado_xts))) +
+               y = coredata(dado_xts),
+               fill = cor_grafico)) +
         tipo_grafico + labs(x = x_titulo,
                             y = y_titulo,
                             title = titulo,
