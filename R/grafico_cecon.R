@@ -12,10 +12,6 @@
 #' @param ... Argumentos adicionais para a funcao de grafico
 #' @return Grafico interativo em html
 #' @export
-#' @example
-#' library(astsa)
-#' grafico_cecon(unemp)
-
 grafico_cecon <-  function (dado_xts, logo = TRUE, FUN = grafico_padrao, ...)
 {
     grafico <- dado_xts %>% FUN(...)

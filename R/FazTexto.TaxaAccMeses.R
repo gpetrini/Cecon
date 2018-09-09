@@ -23,6 +23,6 @@ FazTexto.TaxaAccMeses <- function (x, meses = 12, digitos = 2)
     Taxa_Acum <- format(x = m[length(x)],
                         big.mark = ".",
                         decimal.mark = ",",
-                        digits = deigitos)
+                        digits = digitos)
     return(Taxa_Acum)
 }

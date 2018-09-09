@@ -7,9 +7,6 @@
 #' @param pasta Caminha onde salvar o grafico
 #' @param formato Formato a ser salvo
 #' @return Imagem na pasta especificada
-#' @example
-#' p <- grafico_padrao(unemp)
-#' salvar_grafico(p)
 #' @export
 
 salvar_grafico <- function (grafico, pasta = "./Graficos", formato = ".png")

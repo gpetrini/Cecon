@@ -9,8 +9,7 @@
 #' @param dado Serie conversivel em xts
 #' @param remover_NA Se TRUE, remove NAs
 #' @return Grafico interativo com logo do CECON
-#' @example
-#' grafico_rapido(dado_excel)
+
 
 grafico_rapido <- function (dado, remover_NA = FALSE)
 {
