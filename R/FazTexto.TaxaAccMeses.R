@@ -19,5 +19,5 @@ FazTexto.TaxaAccMeses <- function (x, meses = 12)
         m[i + (meses - 1)] <- k
     }
     m[1:(meses - 1)] <- NA
-    return(m)
+    return(m)[length(x)]
 }

@@ -13,5 +13,5 @@ FazTexto.TaxaAnualizada <- function (x)
         k[i] <- (1 + x[i]/100)^12
     }
     k <- (k - 1) * 100
-    return(k)
+    return(k)[length(x)]
 }
