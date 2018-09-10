@@ -4,7 +4,7 @@
 \alias{FazTexto.TaxaAccMeses}
 \title{Faz Texto Taxa Acumulada em M meses}
 \usage{
-FazTexto.TaxaAccMeses(x, meses = 12, digitos = 2)
+FazTexto.TaxaAccMeses(x, meses = 12, digitos = 2, texto = TRUE)
 }
 \arguments{
 \item{x}{Serie a ser calculada a taxa acumulada}
@@ -12,6 +12,8 @@ FazTexto.TaxaAccMeses(x, meses = 12, digitos = 2)
 \item{meses}{Numero de meses para acumular. Por padrao, 12 meses}
 
 \item{digitos}{Numero de casas decimais}
+
+\item{texto}{Se TRUE retorna valor em caractere}
 }
 \value{
 Retorna texto da taxa acumulada em m meses

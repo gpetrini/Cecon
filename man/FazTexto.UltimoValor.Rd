@@ -4,12 +4,14 @@
 \alias{FazTexto.UltimoValor}
 \title{Faz Texto Ultimo Valor}
 \usage{
-FazTexto.UltimoValor(x, digitos = 2)
+FazTexto.UltimoValor(x, digitos = 2, texto = TRUE)
 }
 \arguments{
 \item{x}{Serie a ser analisada}
 
 \item{digitos}{Numero de casas decimais. Por padrao, 2}
+
+\item{texto}{Se TRUE, retorna caractere}
 }
 \value{
 Texto

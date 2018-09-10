@@ -6,10 +6,12 @@
 #' @param x Serie a ser calculada a taxa acumulada
 #' @param meses Numero de meses para acumular. Por padrao, 12 meses
 #' @param digitos Numero de casas decimais
+#' @param texto Se TRUE retorna valor em caractere
 #' @return Retorna texto da taxa acumulada em m meses
 
-FazTexto.TaxaAccMeses <- function (x, meses = 12, digitos = 2)
+FazTexto.TaxaAccMeses <- function (x, meses = 12, digitos = 2, texto = TRUE)
 {
+    if (texto == TRUE) {
     m <- c(1:(length(x)))
     for (i in 1:(length(x) - (meses - 1))) {
         k <- 1
@@ -25,4 +27,18 @@ FazTexto.TaxaAccMeses <- function (x, meses = 12, digitos = 2)
                         decimal.mark = ",",
                         digits = digitos)
     return(Taxa_Acum)
+    } else {
+        m <- c(1:(length(x)))
+        for (i in 1:(length(x) - (meses - 1))) {
+            k <- 1
+            for (j in 0:(meses - 1)) {
+                k <- k * (1 + x[(i - j) + (meses - 1)]/100)
+            }
+            k <- (k - 1) * 100
+            m[i + (meses - 1)] <- k
+        }
+        m[1:(meses - 1)] <- NA
+        Taxa_Acum <- m[length(x)]
+        return(Taxa_Acum)
+    }
 }

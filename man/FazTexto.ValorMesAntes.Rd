@@ -4,7 +4,7 @@
 \alias{FazTexto.ValorMesAntes}
 \title{Faz Texto Valor Meses Antes}
 \usage{
-FazTexto.ValorMesAntes(x, digitos = 2, meses = 12)
+FazTexto.ValorMesAntes(x, digitos = 2, meses = 12, texto = TRUE)
 }
 \arguments{
 \item{x}{Serie a ser analisada}
@@ -12,6 +12,8 @@ FazTexto.ValorMesAntes(x, digitos = 2, meses = 12)
 \item{digitos}{Numero de casas decimais. Por padrao, 2}
 
 \item{meses}{Numero de meses a serem analisados}
+
+\item{texto}{Se TRUE, retorna caractere}
 }
 \value{
 Texto

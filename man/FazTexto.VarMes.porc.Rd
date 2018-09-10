@@ -4,7 +4,8 @@
 \alias{FazTexto.VarMes.porc}
 \title{Faz Texto Variacao m meses percentual}
 \usage{
-FazTexto.VarMes.porc(x, digitos = 2, meses = 12)
+FazTexto.VarMes.porc(x, digitos = 2, meses = 12, porcentagem = FALSE,
+  texto = TRUE)
 }
 \arguments{
 \item{x}{Serie a ser analisada}
@@ -12,6 +13,10 @@ FazTexto.VarMes.porc(x, digitos = 2, meses = 12)
 \item{digitos}{Numero de casas decimias. Por padrao, 2}
 
 \item{meses}{Numero de meses a serem calculados. Por padrao, 12}
+
+\item{porcentagem}{se TRUE, incui % ao numero}
+
+\item{texto}{Se TRUE retorna caractere}
 }
 \value{
 Texto

@@ -4,7 +4,7 @@
 \alias{FazTexto.VarMes.Abs}
 \title{Faz Texto Variacao M meses absoluta}
 \usage{
-FazTexto.VarMes.Abs(x, digitos = 2, meses = 12)
+FazTexto.VarMes.Abs(x, digitos = 2, meses = 12, texto = TRUE)
 }
 \arguments{
 \item{x}{Serie percentual}
@@ -12,6 +12,8 @@ FazTexto.VarMes.Abs(x, digitos = 2, meses = 12)
 \item{digitos}{Numero de casas decimais. Por padrao, 2}
 
 \item{meses}{Numero de mesesa serem calculados.Por padrao, 12}
+
+\item{texto}{Se TRUE, retorna valor em caractere}
 }
 \value{
 Texto

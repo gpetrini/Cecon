@@ -5,18 +5,23 @@
 #' @export
 #' @param x Serie para calcular taxa anualizada
 #' @param digitos Numero de casas decimais
+#' @param texto Se TRUE retorna caractere
 
 
-FazTexto.TaxaAnualizada <- function (x, digitos = 2)
+FazTexto.TaxaAnualizada <- function (x, digitos = 2, texto = TRUE)
 {
     k <- c(1:length(x))
     for (i in 0:length(x)) {
         k[i] <- (1 + x[i]/100)^12
     }
     k <- (k - 1) * 100
+    if (texto == TRUE) {
     Taxa_Anuali <- format(k[length(x)],
                           big.mark = ".",
                           decimal.mark = ",",
                           digits = digitos)
     return(Taxa_Anuali)
+    } else {
+        return(k[length(x)])
+    }
 }
