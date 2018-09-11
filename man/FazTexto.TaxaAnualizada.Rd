@@ -4,7 +4,7 @@
 \alias{FazTexto.TaxaAnualizada}
 \title{Faz Texto Taxa Anualizada}
 \usage{
-FazTexto.TaxaAnualizada(x, digitos = 2, texto = TRUE)
+FazTexto.TaxaAnualizada(x, digitos = 2, texto = TRUE, tempo = 12)
 }
 \arguments{
 \item{x}{Serie para calcular taxa anualizada}
@@ -12,6 +12,8 @@ FazTexto.TaxaAnualizada(x, digitos = 2, texto = TRUE)
 \item{digitos}{Numero de casas decimais}
 
 \item{texto}{Se TRUE retorna caractere}
+
+\item{tempo}{Se mensal 12, trimestral 4. Se for xts, ts ou zoo, calcula automaticamente.}
 }
 \description{
 Cria texto para taxa anualizada
